@@ -1,0 +1,23 @@
+---
+- name: Installeer MySQL server en Python bindings
+  ansible.builtin.apt:
+    name:
+      - mysql-server
+      - python3-pymysql
+    state: present
+    update_cache: true
+
+- name: Zorg dat de MySQL service draait
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Maak de MySQL gebruiker aan
+  community.mysql.mysql_user:
+    name: "{{ mysql_db_user }}"
+    password: "{{ mysql_db_password }}"
+    priv: '*.*:ALL'
+    host: '%'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
